@@ -1,9 +1,10 @@
 import pytest
 import requests
+import allure
 
 BASE_URL = "https://qa-scooter.praktikum-services.ru/api/v1"
 
-
+@allure.feature("Создание заказа")
 class TestCreateOrder:
     @pytest.mark.parametrize("colors", [
         ["BLACK"],
@@ -11,27 +12,24 @@ class TestCreateOrder:
         ["BLACK", "GREY"],
         []  # вариант без указания цвета
     ])
+    @allure.title("Создание заказа с цветом {colors}")
     def test_create_order_with_colors(self, colors):
-        """
-        Тест проверяет, что при создании заказа:
-        - Возможен выбор одного цвета или двух.
-        - Возможна отправка заказа без указания цвета.
-        - В ответе присутствует поле 'track', содержащее информацию о заказе.
-        """
-        payload = {
-            "firstName": "Test",
-            "lastName": "User",
-            "address": "Some street 123",
-            "metroStation": 4,
-            "phone": "+7 901 123-45-67",
-            "rentTime": 5,
-            "deliveryDate": "2023-12-12",
-            "comment": "Test order",
-            "color": colors  # параметр цвета
-        }
-
-        response = requests.post(f"{BASE_URL}/orders", json=payload)
-        # Ожидаемый код ответа может быть 200 или 201
-        assert response.status_code in [200, 201], f"Неверный статус: {response.status_code}"
-        response_json = response.json()
-        assert "track" in response_json, "Ответ не содержит поле 'track'"
+        with allure.step("Формируем тело запроса для создания заказа"):
+            payload = {
+                "firstName": "Test",
+                "lastName": "User",
+                "address": "Some street 123",
+                "metroStation": 4,
+                "phone": "+7 901 123-45-67",
+                "rentTime": 5,
+                "deliveryDate": "2023-12-12",
+                "comment": "Test order",
+                "color": colors  # параметр цвета
+            }
+        with allure.step("Отправляем запрос на создание заказа"):
+            response = requests.post(f"{BASE_URL}/orders", json=payload)
+        with allure.step("Проверяем статус ответа и наличие поля 'track'"):
+            # Ожидаемый код ответа может быть 200 или 201
+            assert response.status_code in [200, 201], f"Неверный статус: {response.status_code}"
+            response_json = response.json()
+            assert "track" in response_json, "Ответ не содержит поле 'track'"
