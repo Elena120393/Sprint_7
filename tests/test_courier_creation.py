@@ -1,26 +1,22 @@
+
 import requests
 import pytest
 import allure
+from config import BASE_URL
 from utils.courier_utils import register_new_courier_and_return_login_password
-
-BASE_URL = "https://qa-scooter.praktikum-services.ru/api/v1"
 
 @allure.feature("Создание курьера")
 class TestCourierCreation:
     @allure.title("Успешное создание курьера")
-    def test_create_courier_success(self):
-        with allure.step("Регистрируем нового курьера"):
-            courier_data = register_new_courier_and_return_login_password()
+    def test_create_courier_success(self, registered_courier):
         with allure.step("Проверяем, что курьер создан"):
-            assert courier_data, "Курьер не создан. Функция вернула пустой список."
+            assert registered_courier, "Курьер не создан. Функция вернула пустой список."
 
     @allure.title("Проверка ошибки при создании дубликата курьера")
-    def test_duplicate_courier(self):
-        with allure.step("Регистрируем первого курьера"):
-            courier_data = register_new_courier_and_return_login_password()
-        with allure.step("Извлекаем данные курьера"):
-            assert courier_data, "Первый курьер не создан"
-            login, password, first_name = courier_data
+    def test_duplicate_courier(self, registered_courier):
+        with allure.step("Извлекаем данные курьера из предварительной регистрации"):
+            assert registered_courier, "Первый курьер не создан"
+            login, password, first_name = registered_courier
             payload = {
                 "login": login,
                 "password": password,
