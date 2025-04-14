@@ -1,9 +1,9 @@
 import requests
 import pytest
 import allure
+from config import BASE_URL
 from utils.courier_utils import register_new_courier_and_return_login_password
 
-BASE_URL = "https://qa-scooter.praktikum-services.ru/api/v1"
 
 @allure.feature("Авторизация курьера")
 class TestCourierLogin:

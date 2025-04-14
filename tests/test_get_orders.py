@@ -2,7 +2,7 @@ import requests
 import pytest
 import allure
 
-BASE_URL = "https://qa-scooter.praktikum-services.ru/api/v1"
+from config import BASE_URL
 
 @allure.feature("Получение списка заказов")
 class TestGetOrders:
